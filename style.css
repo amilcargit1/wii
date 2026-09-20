@@ -190,23 +190,31 @@ html,body{
 
 .message-box{
   position:absolute;
-  left:0;right:0;
-  bottom:6%;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:min(88vw, 460px);
   text-align:center;
-  padding:0 1.4rem;
-  z-index:5;
+  padding:1.2rem 1.4rem;
+  z-index:15;
+  background:rgba(8,6,4,.62);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(244,197,66,.28);
+  border-radius:20px;
+  box-shadow:0 0 30px rgba(0,0,0,.5);
+  pointer-events:none;
 }
 .msg{
-  font-size:1.05rem;
+  font-size:1rem;
+  line-height:1.5;
   color:var(--cream);
-  text-shadow:0 0 12px rgba(0,0,0,.8);
   opacity:0;
-  margin:.35rem 0;
+  margin:.4rem 0;
   transition:opacity 1.2s ease, transform 1.2s ease;
   transform:translateY(10px);
 }
 .msg.show{opacity:1;transform:translateY(0);}
-.line1{font-size:1.4rem;color:var(--gold-soft);font-weight:bold;}
+.line1{font-size:1.5rem;color:var(--gold-soft);font-weight:bold;margin-bottom:.6rem;}
 
 .popup{
   position:absolute;
