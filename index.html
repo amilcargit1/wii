@@ -8,23 +8,39 @@
 </head>
 <body>
 
+  <!-- MODO REGALO -->
+  <section id="gift" class="screen">
+    <div class="sky"></div>
+    <div class="gift-content">
+      <div class="envelope" id="envelope">
+        <div class="envelope-glow"></div>
+        <div class="envelope-body">
+          <div class="envelope-flap"></div>
+          <div class="envelope-seal">💛</div>
+        </div>
+      </div>
+      <p class="gift-text">Tienes un regalo especial...</p>
+      <p class="gift-sub">✨ Toca para abrir ✨</p>
+    </div>
+  </section>
+
   <!-- PANTALLA INICIAL -->
-  <section id="intro" class="screen">
-    <div class="sky" id="introSky"></div>
+  <section id="intro" class="screen hidden">
+    <div class="sky"></div>
     <div class="intro-content">
       <div class="bud">
         <div class="bud-glow"></div>
         <div class="bud-shape"></div>
       </div>
       <p class="pre-title">Para alguien muy especial... 💛</p>
-      <h1 class="name-title">YESICA</h1>
+      <h1 class="name-title" id="nameTitle"></h1>
       <button id="startBtn" class="start-btn">✨ Toca para comenzar ✨</button>
     </div>
   </section>
 
   <!-- ESCENA PRINCIPAL -->
   <section id="garden" class="screen hidden">
-    <div class="sky" id="gardenSky"></div>
+    <div class="sky"></div>
     <div class="moon"></div>
     <div class="halo"><div class="halo-core"></div></div>
     <div class="field" id="field"></div>
@@ -36,11 +52,26 @@
       <p class="msg line4"></p>
     </div>
 
+    <div class="counter-box" id="counterBox">
+      <p class="counter-label">Llevamos juntos</p>
+      <p class="counter-value" id="counterValue">-</p>
+    </div>
+
     <div class="popup" id="popup"></div>
 
+    <button id="letterBtn" class="letter-btn" aria-label="Carta">💌</button>
     <button id="musicToggle" class="music-btn" aria-label="Música">🔇</button>
     <audio id="bgMusic" src="assets/music.mp3" loop></audio>
   </section>
+
+  <!-- CARTA -->
+  <div class="letter-overlay" id="letterOverlay">
+    <div class="letter-card">
+      <button class="letter-close" id="letterClose" aria-label="Cerrar">✕</button>
+      <p class="letter-title">Para ti, Yesica 💛</p>
+      <div class="letter-text" id="letterText"></div>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
