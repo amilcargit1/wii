@@ -53,6 +53,25 @@ html,body{
 }
 @keyframes twinkle{from{opacity:.35;}to{opacity:.85;}}
 
+.no-tap{cursor:auto;}
+
+/* ---------- CONTRASEÑA ---------- */
+.pass-content{position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;text-align:center;padding:1.5rem;}
+.pass-icon{font-size:2.4rem;filter:drop-shadow(0 0 10px rgba(244,197,66,.5));margin-bottom:.3rem;}
+.pass-title{font-size:1.15rem;color:var(--cream);}
+.pass-sub{font-size:.9rem;color:var(--gold-soft);margin-bottom:.4rem;}
+.pass-input{
+  font-family:inherit;font-size:1rem;text-align:center;
+  color:var(--cream);background:rgba(255,255,255,.06);
+  border:1px solid rgba(244,197,66,.4);border-radius:30px;
+  padding:.7rem 1.3rem;width:min(80vw,280px);margin-bottom:.8rem;
+  outline:none;
+}
+.pass-input:focus{border-color:var(--gold-soft);box-shadow:0 0 12px rgba(244,197,66,.4);}
+.pass-error{font-size:.85rem;color:#f2a1a1;margin-top:.8rem;opacity:0;height:1.2em;}
+.pass-error.show{opacity:1;animation:shake .4s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+
 /* ---------- MODO REGALO ---------- */
 .gift-content{
   position:relative;
@@ -169,6 +188,43 @@ html,body{
   75%{transform:translate(var(--dx3,30px),var(--dy3,-20px));}
   100%{transform:translate(0,0);}
 }
+
+.shooting-star{
+  position:absolute;width:3px;height:3px;border-radius:50%;
+  background:var(--cream);box-shadow:0 0 8px 3px rgba(244,197,66,.8);
+  z-index:4;pointer-events:none;
+}
+.shooting-star::after{
+  content:"";position:absolute;top:50%;right:100%;
+  width:70px;height:1.5px;
+  background:linear-gradient(90deg, transparent, rgba(244,197,66,.9));
+  transform:translateY(-50%);
+}
+.wish-text{
+  position:absolute;font-size:.85rem;color:var(--gold-soft);
+  text-shadow:0 0 8px rgba(244,197,66,.7);opacity:0;
+  transition:opacity .5s ease, transform .5s ease;
+  transform:translateY(6px);pointer-events:none;z-index:4;white-space:nowrap;
+}
+.wish-text.show{opacity:1;transform:translateY(0);}
+
+.bouquets{position:absolute;inset:0;pointer-events:none;z-index:3;}
+.bouquet{
+  position:absolute;font-size:34px;
+  filter:drop-shadow(0 0 10px rgba(244,197,66,.6));
+  animation:bouquetFloat 4s ease-in-out infinite;
+  pointer-events:auto;cursor:pointer;
+}
+@keyframes bouquetFloat{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-6px) rotate(2deg);}}
+
+.beat .bloom{transition:transform .12s ease;}
+.beat.pulse .bloom{transform:scale(1.18) !important;}
+
+.flash-screen{
+  position:fixed;inset:0;z-index:55;background:radial-gradient(circle, rgba(255,235,150,.9), transparent 70%);
+  opacity:0;pointer-events:none;transition:opacity .5s ease;
+}
+.flash-screen.show{opacity:1;transition:opacity .1s ease;}
 
 .message-box{
   position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);
