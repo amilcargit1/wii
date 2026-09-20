@@ -20,14 +20,34 @@
     "Cada flor de este jardín te pertenece. 💛"
   ];
 
+  const FLOAT_PHRASES = [
+    'Siempre brillas', 'Mi flor favorita', 'Solo para ti', 'Luz en mi vida',
+    'Un detalle amarillo', 'Eres luz', 'Flores para ti', 'Feliz de tenerte'
+  ];
+
   // ---------- START TRANSITION ----------
   startBtn.addEventListener('click', () => {
     intro.classList.add('hidden');
     garden.classList.remove('hidden');
-    if (!reduced) buildGarden();
+    if (!reduced) { buildGarden(); buildFloatingPhrases(); }
     else buildGardenStatic();
     revealMessages();
   });
+
+  function buildFloatingPhrases() {
+    const count = window.innerWidth < 480 ? 6 : 9;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.className = 'float-phrase';
+      p.textContent = FLOAT_PHRASES[i % FLOAT_PHRASES.length];
+      p.style.left = rand(4, 88) + 'vw';
+      p.style.top = rand(8, 62) + 'vh';
+      p.style.fontSize = rand(13, 19) + 'px';
+      p.style.animationDuration = rand(9, 15) + 's';
+      p.style.animationDelay = rand(0, 8) + 's';
+      field.appendChild(p);
+    }
+  }
 
   // ---------- BUILD SCENE ----------
   function rand(min, max) { return Math.random() * (max - min) + min; }
