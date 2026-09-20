@@ -130,6 +130,46 @@ html,body{
   overflow:hidden;
 }
 
+.halo{
+  position:absolute;
+  left:50%;top:34%;
+  transform:translate(-50%,-50%);
+  width:min(70vw,280px);
+  height:min(70vw,280px);
+  border-radius:50%;
+  background:radial-gradient(circle, transparent 55%, rgba(244,197,66,.9) 60%, rgba(244,197,66,.15) 72%, transparent 78%);
+  box-shadow:0 0 60px 10px rgba(244,197,66,.35);
+  animation:haloPulse 5s ease-in-out infinite;
+  z-index:1;
+}
+@keyframes haloPulse{0%,100%{opacity:.75;}50%{opacity:1;}}
+.halo-core{
+  position:absolute;
+  left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:52%;height:52%;
+  border-radius:50%;
+  background:radial-gradient(circle at 40% 35%, #1c1712, #0a0806 75%);
+}
+
+.float-phrase{
+  position:absolute;
+  font-family:'Brush Script MT','Segoe Script', cursive, 'Georgia', serif;
+  color:var(--gold-soft);
+  text-shadow:0 0 10px rgba(244,197,66,.7);
+  opacity:0;
+  white-space:nowrap;
+  pointer-events:none;
+  animation:phraseDrift linear infinite;
+  z-index:2;
+}
+@keyframes phraseDrift{
+  0%{opacity:0;transform:translateY(0);}
+  10%{opacity:.85;}
+  85%{opacity:.85;}
+  100%{opacity:0;transform:translateY(-40px);}
+}
+
 .flower{
   position:absolute;
   bottom:0;
