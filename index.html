@@ -8,8 +8,21 @@
 </head>
 <body>
 
+  <!-- CONTRASEÑA -->
+  <section id="password" class="screen no-tap">
+    <div class="sky"></div>
+    <div class="pass-content">
+      <p class="pass-icon">🔒</p>
+      <p class="pass-title">Esto es solo para ti...</p>
+      <p class="pass-sub">Escribe la palabra clave</p>
+      <input type="text" id="passInput" class="pass-input" autocomplete="off" spellcheck="false">
+      <button id="passBtn" class="start-btn">✨ Entrar ✨</button>
+      <p class="pass-error" id="passError">Esa no es... intenta de nuevo 💛</p>
+    </div>
+  </section>
+
   <!-- MODO REGALO -->
-  <section id="gift" class="screen">
+  <section id="gift" class="screen hidden">
     <div class="sky"></div>
     <div class="gift-content">
       <div class="envelope" id="envelope">
@@ -40,10 +53,11 @@
 
   <!-- ESCENA PRINCIPAL -->
   <section id="garden" class="screen hidden">
-    <div class="sky"></div>
+    <div class="sky" id="gardenSky"></div>
     <div class="moon"></div>
     <div class="halo"><div class="halo-core"></div></div>
     <div class="field" id="field"></div>
+    <div class="bouquets" id="bouquets"></div>
 
     <div class="message-box" id="messageBox">
       <p class="msg line1"></p>
