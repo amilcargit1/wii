@@ -1,14 +1,25 @@
 (() => {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  const gift = document.getElementById('gift');
   const intro = document.getElementById('intro');
   const garden = document.getElementById('garden');
+  const envelope = document.getElementById('envelope');
   const startBtn = document.getElementById('startBtn');
+  const nameTitle = document.getElementById('nameTitle');
   const field = document.getElementById('field');
   const messageBox = document.getElementById('messageBox');
+  const counterBox = document.getElementById('counterBox');
+  const counterValue = document.getElementById('counterValue');
   const popup = document.getElementById('popup');
   const musicBtn = document.getElementById('musicToggle');
   const bgMusic = document.getElementById('bgMusic');
+  const letterBtn = document.getElementById('letterBtn');
+  const letterOverlay = document.getElementById('letterOverlay');
+  const letterClose = document.getElementById('letterClose');
+  const letterText = document.getElementById('letterText');
+
+  const START_DATE = new Date(2024, 4, 14, 0, 0, 0); // 14/05/2024
 
   const PHRASES = [
     "Mi lugar favorito siempre será a tu lado. 💛",
@@ -25,33 +36,81 @@
     'Un detalle amarillo', 'Eres luz', 'Flores para ti', 'Feliz de tenerte'
   ];
 
-  // ---------- START TRANSITION ----------
-  startBtn.addEventListener('click', () => {
-    intro.classList.add('hidden');
-    garden.classList.remove('hidden');
-    if (!reduced) { buildGarden(); buildFloatingPhrases(); }
-    else buildGardenStatic();
-    revealMessages();
-  });
+  const LETTER_TEXT = `Yesica,
 
-  function buildFloatingPhrases() {
-    const count = window.innerWidth < 480 ? 6 : 9;
-    for (let i = 0; i < count; i++) {
-      const p = document.createElement('div');
-      p.className = 'float-phrase';
-      p.textContent = FLOAT_PHRASES[i % FLOAT_PHRASES.length];
-      p.style.left = rand(4, 88) + 'vw';
-      p.style.top = rand(8, 62) + 'vh';
-      p.style.fontSize = rand(13, 19) + 'px';
-      p.style.animationDuration = rand(9, 15) + 's';
-      p.style.animationDelay = rand(0, 8) + 's';
-      field.appendChild(p);
+Desde el 14 de mayo de 2024 mi vida tiene un color distinto, uno amarillo,
+cálido, como estas flores.
+
+Quiero que sepas que cada día contigo ha sido un regalo, y que armé este
+pequeño jardín para recordarte lo mucho que significas para mí.
+
+Gracias por elegirme, por quedarte, por tu risa y por todos los días que
+aún nos faltan por vivir juntos.
+
+Te quiero, mi princesa. 💛`;
+
+  function rand(min, max) { return Math.random() * (max - min) + min; }
+
+  // ---------- MODO REGALO -> INTRO ----------
+  envelope.addEventListener('click', openGift);
+  gift.addEventListener('click', openGift);
+  function openGift() {
+    gift.classList.add('hidden');
+    intro.classList.remove('hidden');
+    animateName();
+  }
+
+  function animateName() {
+    const word = 'YESICA';
+    nameTitle.innerHTML = '';
+    [...word].forEach((ch, i) => {
+      const span = document.createElement('span');
+      span.className = 'letter';
+      span.textContent = ch;
+      span.style.animationDelay = (i * 0.12) + 's';
+      nameTitle.appendChild(span);
+      if (!reduced) {
+        setTimeout(() => spawnNameSpark(span), i * 120);
+      }
+    });
+  }
+
+  function spawnNameSpark(span) {
+    const rect = span.getBoundingClientRect();
+    for (let i = 0; i < 4; i++) {
+      const s = document.createElement('div');
+      s.style.position = 'fixed';
+      s.style.left = (rect.left + rect.width / 2) + 'px';
+      s.style.top = (rect.top + rect.height / 2) + 'px';
+      s.style.width = '3px';
+      s.style.height = '3px';
+      s.style.borderRadius = '50%';
+      s.style.background = 'var(--gold-soft)';
+      s.style.boxShadow = '0 0 6px 2px rgba(244,197,66,.8)';
+      s.style.zIndex = 30;
+      s.style.pointerEvents = 'none';
+      s.style.transition = 'transform .7s ease, opacity .7s ease';
+      document.body.appendChild(s);
+      requestAnimationFrame(() => {
+        s.style.transform = `translate(${rand(-25, 25)}px, ${rand(-25, 25)}px)`;
+        s.style.opacity = '0';
+      });
+      setTimeout(() => s.remove(), 750);
     }
   }
 
-  // ---------- BUILD SCENE ----------
-  function rand(min, max) { return Math.random() * (max - min) + min; }
+  // ---------- INTRO -> GARDEN ----------
+  startBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    intro.classList.add('hidden');
+    garden.classList.remove('hidden');
+    if (!reduced) { buildGarden(); buildFloatingPhrases(); buildButterflies(); }
+    else buildGardenStatic();
+    revealMessages();
+    startCounter();
+  });
 
+  // ---------- BUILD SCENE ----------
   function buildGarden() {
     const flowerEmojis = ['🌻', '🌼'];
     const count = window.innerWidth < 480 ? 14 : 20;
@@ -59,8 +118,8 @@
     for (let i = 0; i < count; i++) {
       const f = document.createElement('div');
       f.className = 'flower';
-      const depth = Math.random(); // 0 far, 1 near
-      const size = 26 + depth * 34; // 26-60px
+      const depth = Math.random();
+      const size = 26 + depth * 34;
       const left = rand(2, 94);
       const stemH = 40 + depth * 70;
       const delay = rand(0, 1.6);
@@ -73,12 +132,11 @@
       f.style.animationDelay = `${delay}s, ${rand(0, 2)}s`;
       f.style.animationDuration = `1.4s, ${windDur}s`;
 
-      f.innerHTML = `<span class="bloom">${flowerEmojis[i % 2]}</span><div class="stem" style="height:${stemH}px"></div>`;
+      f.innerHTML = `<span class="bloom" style="animation-delay:${rand(0,3)}s">${flowerEmojis[i % 2]}</span><div class="stem" style="height:${stemH}px"></div>`;
       f.addEventListener('click', () => flowerSurprise(f));
       field.appendChild(f);
     }
 
-    // petals falling
     const petalCount = window.innerWidth < 480 ? 10 : 16;
     for (let i = 0; i < petalCount; i++) {
       const p = document.createElement('div');
@@ -92,7 +150,6 @@
       field.appendChild(p);
     }
 
-    // sparks
     const sparkCount = window.innerWidth < 480 ? 12 : 18;
     for (let i = 0; i < sparkCount; i++) {
       const s = document.createElement('div');
@@ -119,6 +176,42 @@
     }
   }
 
+  function buildFloatingPhrases() {
+    const count = window.innerWidth < 480 ? 6 : 9;
+    for (let i = 0; i < count; i++) {
+      const p = document.createElement('div');
+      p.className = 'float-phrase';
+      p.textContent = FLOAT_PHRASES[i % FLOAT_PHRASES.length];
+      p.style.left = rand(4, 88) + 'vw';
+      p.style.top = rand(8, 62) + 'vh';
+      p.style.fontSize = rand(13, 19) + 'px';
+      p.style.animationDuration = rand(9, 15) + 's';
+      p.style.animationDelay = rand(0, 8) + 's';
+      field.appendChild(p);
+    }
+  }
+
+  function buildButterflies() {
+    const count = window.innerWidth < 480 ? 3 : 5;
+    for (let i = 0; i < count; i++) {
+      const b = document.createElement('div');
+      b.className = 'butterfly';
+      b.innerHTML = '<span>🦋</span>';
+      b.style.left = rand(8, 85) + 'vw';
+      b.style.top = rand(10, 55) + 'vh';
+      b.style.fontSize = rand(16, 24) + 'px';
+      b.style.setProperty('--dx1', rand(30, 60) + 'px');
+      b.style.setProperty('--dy1', -rand(20, 45) + 'px');
+      b.style.setProperty('--dx2', -rand(20, 40) + 'px');
+      b.style.setProperty('--dy2', -rand(40, 70) + 'px');
+      b.style.setProperty('--dx3', rand(20, 45) + 'px');
+      b.style.setProperty('--dy3', -rand(10, 30) + 'px');
+      b.style.animationDuration = rand(10, 16) + 's';
+      b.style.animationDelay = rand(0, 5) + 's';
+      field.appendChild(b);
+    }
+  }
+
   // ---------- MESSAGE SEQUENCE ----------
   function revealMessages() {
     const lines = [
@@ -132,15 +225,30 @@
       el.textContent = line.text;
       setTimeout(() => el.classList.add('show'), 1800 + i * 1400);
     });
+    setTimeout(() => counterBox.classList.add('show'), 1800 + lines.length * 1400 + 600);
+  }
+
+  // ---------- CONTADOR DE TIEMPO JUNTOS ----------
+  function startCounter() {
+    updateCounter();
+    setInterval(updateCounter, 1000);
+  }
+  function updateCounter() {
+    const now = new Date();
+    let diffMs = now - START_DATE;
+    if (diffMs < 0) diffMs = 0;
+    const days = Math.floor(diffMs / 86400000);
+    const hours = Math.floor((diffMs % 86400000) / 3600000);
+    const mins = Math.floor((diffMs % 3600000) / 60000);
+    const secs = Math.floor((diffMs % 60000) / 1000);
+    counterValue.textContent = `${days} días, ${hours}h ${mins}m ${secs}s`;
   }
 
   // ---------- FLOWER CLICK SURPRISE ----------
   function flowerSurprise(f) {
     f.classList.add('flash');
     setTimeout(() => f.classList.remove('flash'), 600);
-
     if (!reduced) spawnHearts(f);
-
     const phrase = PHRASES[Math.floor(Math.random() * PHRASES.length)];
     popup.textContent = phrase;
     popup.classList.add('show');
@@ -169,16 +277,29 @@
     }
   }
 
+  // ---------- CARTA ----------
+  letterText.textContent = LETTER_TEXT;
+  letterBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    letterOverlay.classList.add('show');
+  });
+  letterClose.addEventListener('click', (e) => {
+    e.stopPropagation();
+    letterOverlay.classList.remove('show');
+  });
+  letterOverlay.addEventListener('click', (e) => {
+    if (e.target === letterOverlay) letterOverlay.classList.remove('show');
+  });
+
   // ---------- MUSIC TOGGLE ----------
   let playing = false;
-  musicBtn.addEventListener('click', () => {
+  musicBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
     if (!playing) {
       bgMusic.play().then(() => {
         playing = true;
         musicBtn.textContent = '🔊';
-      }).catch(() => {
-        // no music file present yet — fail silently
-      });
+      }).catch(() => {});
     } else {
       bgMusic.pause();
       playing = false;
