@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Para Yesica 💛</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- PANTALLA INICIAL -->
+  <section id="intro" class="screen">
+    <div class="sky" id="introSky"></div>
+    <div class="intro-content">
+      <div class="bud">
+        <div class="bud-glow"></div>
+        <div class="bud-shape"></div>
+      </div>
+      <p class="pre-title">Para alguien muy especial... 💛</p>
+      <h1 class="name-title">YESICA</h1>
+      <button id="startBtn" class="start-btn">✨ Toca para comenzar ✨</button>
+    </div>
+  </section>
+
+  <!-- ESCENA PRINCIPAL -->
+  <section id="garden" class="screen hidden">
+    <div class="sky" id="gardenSky"></div>
+    <div class="moon"></div>
+    <div class="field" id="field"></div>
+
+    <div class="message-box" id="messageBox">
+      <p class="msg line1"></p>
+      <p class="msg line2"></p>
+      <p class="msg line3"></p>
+      <p class="msg line4"></p>
+    </div>
+
+    <div class="popup" id="popup"></div>
+
+    <button id="musicToggle" class="music-btn" aria-label="Música">🔇</button>
+    <audio id="bgMusic" src="assets/music.mp3" loop></audio>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>
