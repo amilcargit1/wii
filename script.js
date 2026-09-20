@@ -1,6 +1,10 @@
 (() => {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  const passwordScreen = document.getElementById('password');
+  const passInput = document.getElementById('passInput');
+  const passBtn = document.getElementById('passBtn');
+  const passError = document.getElementById('passError');
   const gift = document.getElementById('gift');
   const intro = document.getElementById('intro');
   const garden = document.getElementById('garden');
@@ -18,6 +22,8 @@
   const letterOverlay = document.getElementById('letterOverlay');
   const letterClose = document.getElementById('letterClose');
   const letterText = document.getElementById('letterText');
+  const gardenSky = document.getElementById('gardenSky');
+  const bouquets = document.getElementById('bouquets');
 
   const START_DATE = new Date(2024, 4, 14, 0, 0, 0); // 14/05/2024
 
@@ -49,7 +55,32 @@ aún nos faltan por vivir juntos.
 
 Te quiero, mi princesa. 💛`;
 
+  const WISH_PHRASES = [
+    "Pide un deseo 💛", "Siempre estaré para ti", "Eres mi persona favorita",
+    "Gracias por existir", "Mi corazón es tuyo", "Contigo, siempre"
+  ];
+
+  const CORRECT_PASSWORD = 'mi princesa';
+
+  function normalize(str) {
+    return str.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  }
+
   function rand(min, max) { return Math.random() * (max - min) + min; }
+
+  // ---------- CONTRASEÑA ----------
+  function checkPassword() {
+    if (normalize(passInput.value) === normalize(CORRECT_PASSWORD)) {
+      passwordScreen.classList.add('hidden');
+      gift.classList.remove('hidden');
+    } else {
+      passError.classList.remove('show');
+      void passError.offsetWidth;
+      passError.classList.add('show');
+    }
+  }
+  passBtn.addEventListener('click', (e) => { e.stopPropagation(); checkPassword(); });
+  passInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkPassword(); });
 
   // ---------- MODO REGALO -> INTRO ----------
   envelope.addEventListener('click', openGift);
@@ -104,11 +135,103 @@ Te quiero, mi princesa. 💛`;
     e.stopPropagation();
     intro.classList.add('hidden');
     garden.classList.remove('hidden');
-    if (!reduced) { buildGarden(); buildFloatingPhrases(); buildButterflies(); }
+    if (!reduced) { buildGarden(); buildFloatingPhrases(); buildButterflies(); buildBouquets(); }
     else buildGardenStatic();
     revealMessages();
     startCounter();
   });
+
+  // ---------- LLUVIA DE ESTRELLAS (toca el cielo) ----------
+  gardenSky.addEventListener('click', (e) => {
+    spawnShootingStar(e.clientX, e.clientY);
+  });
+
+  function spawnShootingStar(x, y) {
+    const star = document.createElement('div');
+    star.className = 'shooting-star';
+    star.style.left = x + 'px';
+    star.style.top = y + 'px';
+    document.body.appendChild(star);
+
+    const dx = rand(-120, 120);
+    const dy = rand(140, 240);
+    star.style.transition = 'transform 1s ease-in, opacity 1s ease-in';
+    star.style.zIndex = 40;
+    requestAnimationFrame(() => {
+      star.style.transform = `translate(${dx}px, ${dy}px)`;
+      star.style.opacity = '0';
+    });
+    setTimeout(() => star.remove(), 1050);
+
+    const wish = document.createElement('div');
+    wish.className = 'wish-text';
+    wish.textContent = WISH_PHRASES[Math.floor(Math.random() * WISH_PHRASES.length)];
+    wish.style.left = Math.min(Math.max(x - 60, 10), window.innerWidth - 130) + 'px';
+    wish.style.top = (y - 24) + 'px';
+    document.body.appendChild(wish);
+    requestAnimationFrame(() => wish.classList.add('show'));
+    setTimeout(() => { wish.classList.remove('show'); setTimeout(() => wish.remove(), 500); }, 1600);
+  }
+
+  // ---------- RAMOS CON EFECTO ESPECIAL ----------
+  function buildBouquets() {
+    const spots = [
+      { left: 8, top: 68 }, { left: 78, top: 62 }, { left: 45, top: 74 }
+    ];
+    spots.forEach((spot, i) => {
+      const b = document.createElement('div');
+      b.className = 'bouquet';
+      b.textContent = '💐';
+      b.style.left = spot.left + 'vw';
+      b.style.top = spot.top + 'vh';
+      b.style.animationDelay = (i * 0.6) + 's';
+      b.addEventListener('click', (e) => { e.stopPropagation(); specialEffect(b); });
+      bouquets.appendChild(b);
+    });
+  }
+
+  function specialEffect(el) {
+    const flash = document.createElement('div');
+    flash.className = 'flash-screen';
+    document.body.appendChild(flash);
+    requestAnimationFrame(() => flash.classList.add('show'));
+    setTimeout(() => flash.classList.remove('show'), 150);
+    setTimeout(() => flash.remove(), 700);
+
+    spawnHearts(el);
+    popup.textContent = 'Este ramo es solo para ti, Yesica 💐💛';
+    popup.classList.add('show');
+    clearTimeout(flowerSurprise._t);
+    flowerSurprise._t = setTimeout(() => popup.classList.remove('show'), 2600);
+  }
+
+  // ---------- MÚSICA SINCRONIZADA ----------
+  let audioCtx, analyser, dataArray, syncing = false;
+  function startMusicSync() {
+    if (reduced || syncing) return;
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const src = audioCtx.createMediaElementSource(bgMusic);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 64;
+      src.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      syncing = true;
+      requestAnimationFrame(pulseLoop);
+    } catch (err) { /* Web Audio not available — ignore */ }
+  }
+  function pulseLoop() {
+    if (!syncing) return;
+    analyser.getByteFrequencyData(dataArray);
+    const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+    const flowers = field.querySelectorAll('.flower');
+    flowers.forEach((f, i) => {
+      f.classList.add('beat');
+      f.classList.toggle('pulse', avg > 60 && i % 2 === (Math.floor(performance.now() / 250) % 2));
+    });
+    requestAnimationFrame(pulseLoop);
+  }
 
   // ---------- BUILD SCENE ----------
   function buildGarden() {
@@ -299,11 +422,14 @@ Te quiero, mi princesa. 💛`;
       bgMusic.play().then(() => {
         playing = true;
         musicBtn.textContent = '🔊';
+        startMusicSync();
       }).catch(() => {});
     } else {
       bgMusic.pause();
       playing = false;
       musicBtn.textContent = '🔇';
+      syncing = false;
+      field.querySelectorAll('.flower.pulse').forEach(f => f.classList.remove('pulse'));
     }
   });
 })();
