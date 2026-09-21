@@ -217,6 +217,14 @@ html,body{
 }
 @keyframes tickerMove{from{transform:translateX(100vw);}to{transform:translateX(-100%);}}
 
+.word-cloud{position:absolute;inset:0;pointer-events:none;z-index:1;}
+.word-item{
+  position:absolute;font-weight:bold;white-space:nowrap;
+  opacity:0;animation:wordFade 1.5s ease forwards, wordBob 6s ease-in-out infinite;
+}
+@keyframes wordFade{to{opacity:.8;}}
+@keyframes wordBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+
 .orbit-rings{position:absolute;inset:0;pointer-events:none;z-index:1;}
 .orbit-ring{
   position:absolute;left:50%;top:34%;transform:translate(-50%,-50%);
