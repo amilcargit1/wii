@@ -24,6 +24,8 @@
   const letterText = document.getElementById('letterText');
   const gardenSky = document.getElementById('gardenSky');
   const bouquets = document.getElementById('bouquets');
+  const orbitRings = document.getElementById('orbitRings');
+  const particleFlower = document.getElementById('particleFlower');
 
   const START_DATE = new Date(2024, 4, 14, 0, 0, 0); // 14/05/2024
 
@@ -135,7 +137,9 @@ Te quiero, mi princesa. 💛`;
     e.stopPropagation();
     intro.classList.add('hidden');
     garden.classList.remove('hidden');
-    if (!reduced) { buildGarden(); buildFloatingPhrases(); buildButterflies(); buildBouquets(); }
+    buildOrbitRings();
+    buildParticleFlower();
+    if (!reduced) { buildGarden(); buildFloatingPhrases(); buildButterflies(); buildBouquets(); buildJet(); }
     else buildGardenStatic();
     revealMessages();
     startCounter();
@@ -175,16 +179,15 @@ Te quiero, mi princesa. 💛`;
 
   // ---------- RAMOS CON EFECTO ESPECIAL ----------
   function buildBouquets() {
-    const spots = [
-      { left: 8, top: 68 }, { left: 78, top: 62 }, { left: 45, top: 74 }
-    ];
-    spots.forEach((spot, i) => {
+    const radii = [110, 165, 220];
+    radii.forEach((r, i) => {
       const b = document.createElement('div');
-      b.className = 'bouquet';
+      b.className = 'bouquet orbit-item';
       b.textContent = '💐';
-      b.style.left = spot.left + 'vw';
-      b.style.top = spot.top + 'vh';
-      b.style.animationDelay = (i * 0.6) + 's';
+      b.style.setProperty('--r', r + 'px');
+      const dur = 26 + i * 6;
+      b.style.animationDuration = dur + 's';
+      b.style.animationDelay = -rand(0, dur) + 's';
       b.addEventListener('click', (e) => { e.stopPropagation(); specialEffect(b); });
       bouquets.appendChild(b);
     });
@@ -303,14 +306,52 @@ Te quiero, mi princesa. 💛`;
     const count = window.innerWidth < 480 ? 6 : 9;
     for (let i = 0; i < count; i++) {
       const p = document.createElement('div');
-      p.className = 'float-phrase';
+      p.className = 'float-phrase orbit-item';
       p.textContent = FLOAT_PHRASES[i % FLOAT_PHRASES.length];
-      p.style.left = rand(4, 88) + 'vw';
-      p.style.top = rand(8, 62) + 'vh';
-      p.style.fontSize = rand(13, 19) + 'px';
-      p.style.animationDuration = rand(9, 15) + 's';
-      p.style.animationDelay = rand(0, 8) + 's';
+      p.style.fontSize = rand(12, 17) + 'px';
+      const radius = rand(90, 240);
+      const duration = rand(22, 40);
+      p.style.setProperty('--r', radius + 'px');
+      p.style.animationDuration = duration + 's';
+      p.style.animationDelay = -rand(0, duration) + 's';
       field.appendChild(p);
+    }
+  }
+
+  function buildOrbitRings() {
+    const sizes = [
+      { w: 220, h: 70 }, { w: 320, h: 100 }, { w: 420, h: 130 }
+    ];
+    sizes.forEach(s => {
+      const r = document.createElement('div');
+      r.className = 'orbit-ring';
+      r.style.width = s.w + 'px';
+      r.style.height = s.h + 'px';
+      orbitRings.appendChild(r);
+    });
+  }
+
+  function buildParticleFlower() {
+    const petalCount = 6;
+    for (let i = 0; i < petalCount; i++) {
+      const p = document.createElement('div');
+      p.className = 'petal';
+      p.style.transform = `translate(-50%,-100%) rotate(${(360 / petalCount) * i}deg)`;
+      particleFlower.appendChild(p);
+    }
+  }
+
+  function buildJet() {
+    const count = window.innerWidth < 480 ? 10 : 16;
+    for (let i = 0; i < count; i++) {
+      const j = document.createElement('div');
+      j.className = 'jet-particle';
+      j.style.left = (48 + rand(-3, 3)) + '%';
+      j.style.top = '34%';
+      j.style.setProperty('--jx', rand(-30, 30) + 'px');
+      j.style.animationDuration = rand(3, 5.5) + 's';
+      j.style.animationDelay = -rand(0, 5) + 's';
+      field.appendChild(j);
     }
   }
 
