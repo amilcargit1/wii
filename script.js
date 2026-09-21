@@ -5,6 +5,8 @@
   const passInput = document.getElementById('passInput');
   const passBtn = document.getElementById('passBtn');
   const passError = document.getElementById('passError');
+  const warp = document.getElementById('warp');
+  const warpTunnel = document.getElementById('warpTunnel');
   const gift = document.getElementById('gift');
   const intro = document.getElementById('intro');
   const garden = document.getElementById('garden');
@@ -28,6 +30,7 @@
   const particleFlower = document.getElementById('particleFlower');
   const particleHeart = document.getElementById('particleHeart');
   const tickerWrap = document.getElementById('tickerWrap');
+  const galaxyLayer = document.getElementById('galaxyLayer');
 
   const START_DATE = new Date(2024, 4, 14, 0, 0, 0); // 14/05/2024
 
@@ -87,10 +90,12 @@ Te quiero, mi princesa. 💛`;
   function rand(min, max) { return Math.random() * (max - min) + min; }
 
   // ---------- CONTRASEÑA ----------
+  const WARP_MESSAGES = ['💐', '🌻', 'Para ti', 'Con amor', 'Mi princesa 💛', '✨'];
+
   function checkPassword() {
     if (normalize(passInput.value) === normalize(CORRECT_PASSWORD)) {
       passwordScreen.classList.add('hidden');
-      gift.classList.remove('hidden');
+      runWarp();
     } else {
       passError.classList.remove('show');
       void passError.offsetWidth;
@@ -99,6 +104,46 @@ Te quiero, mi princesa. 💛`;
   }
   passBtn.addEventListener('click', (e) => { e.stopPropagation(); checkPassword(); });
   passInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') checkPassword(); });
+
+  // ---------- TÚNEL DE VELOCIDAD (transición) ----------
+  function runWarp() {
+    warp.classList.remove('hidden');
+
+    if (reduced) {
+      setTimeout(() => { warp.classList.add('hidden'); gift.classList.remove('hidden'); }, 300);
+      return;
+    }
+
+    const streakCount = 26;
+    for (let i = 0; i < streakCount; i++) {
+      const s = document.createElement('div');
+      s.className = 'warp-streak';
+      s.style.setProperty('--ang', rand(0, 360) + 'deg');
+      s.style.animationDuration = rand(0.8, 1.5) + 's';
+      s.style.animationDelay = rand(0, 1.2) + 's';
+      warpTunnel.appendChild(s);
+    }
+
+    const itemCount = 9;
+    for (let i = 0; i < itemCount; i++) {
+      const it = document.createElement('div');
+      it.className = 'warp-item';
+      it.textContent = WARP_MESSAGES[i % WARP_MESSAGES.length];
+      const ang = rand(0, 360) * Math.PI / 180;
+      const dist = rand(220, 380);
+      it.style.setProperty('--fx', Math.cos(ang) * dist + 'px');
+      it.style.setProperty('--fy', Math.sin(ang) * dist + 'px');
+      it.style.animationDuration = rand(1.6, 2.4) + 's';
+      it.style.animationDelay = rand(0, 1) + 's';
+      warpTunnel.appendChild(it);
+    }
+
+    setTimeout(() => {
+      warp.classList.add('hidden');
+      gift.classList.remove('hidden');
+      warpTunnel.innerHTML = '';
+    }, 2700);
+  }
 
   // ---------- MODO REGALO -> INTRO ----------
   envelope.addEventListener('click', openGift);
@@ -517,6 +562,69 @@ Te quiero, mi princesa. 💛`;
   letterOverlay.addEventListener('click', (e) => {
     if (e.target === letterOverlay) letterOverlay.classList.remove('show');
   });
+
+  // ---------- ZOOM Y ARRASTRE DE LA GALAXIA ----------
+  function setupGalaxyPanZoom() {
+    const pointers = new Map();
+    let scale = 1, tx = 0, ty = 0;
+    let lastMid = null, lastDist = null, dragging = false;
+
+    function apply() {
+      galaxyLayer.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+    }
+    function dist(a, b) { return Math.hypot(a.x - b.x, a.y - b.y); }
+    function mid(a, b) { return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; }
+
+    galaxyLayer.addEventListener('pointerdown', (e) => {
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      galaxyLayer.setPointerCapture(e.pointerId);
+      if (pointers.size === 1) { dragging = true; lastMid = { x: e.clientX, y: e.clientY }; }
+      if (pointers.size === 2) {
+        const [a, b] = [...pointers.values()];
+        lastDist = dist(a, b);
+        lastMid = mid(a, b);
+      }
+    });
+
+    galaxyLayer.addEventListener('pointermove', (e) => {
+      if (!pointers.has(e.pointerId)) return;
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (pointers.size === 1 && dragging) {
+        const p = pointers.get(e.pointerId);
+        tx += p.x - lastMid.x;
+        ty += p.y - lastMid.y;
+        lastMid = p;
+        apply();
+      } else if (pointers.size === 2) {
+        const [a, b] = [...pointers.values()];
+        const newDist = dist(a, b);
+        const newMid = mid(a, b);
+        if (lastDist) {
+          scale = Math.min(2.4, Math.max(0.7, scale * (newDist / lastDist)));
+        }
+        tx += newMid.x - lastMid.x;
+        ty += newMid.y - lastMid.y;
+        lastDist = newDist;
+        lastMid = newMid;
+        apply();
+      }
+    });
+
+    function release(e) {
+      pointers.delete(e.pointerId);
+      if (pointers.size === 0) { dragging = false; lastDist = null; }
+      else if (pointers.size === 1) {
+        dragging = true;
+        lastMid = [...pointers.values()][0];
+        lastDist = null;
+      }
+    }
+    galaxyLayer.addEventListener('pointerup', release);
+    galaxyLayer.addEventListener('pointercancel', release);
+    galaxyLayer.addEventListener('pointerleave', release);
+  }
+  setupGalaxyPanZoom();
 
   // ---------- MUSIC TOGGLE ----------
   let playing = false;
