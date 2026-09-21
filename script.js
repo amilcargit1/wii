@@ -26,6 +26,8 @@
   const bouquets = document.getElementById('bouquets');
   const orbitRings = document.getElementById('orbitRings');
   const particleFlower = document.getElementById('particleFlower');
+  const particleHeart = document.getElementById('particleHeart');
+  const tickerWrap = document.getElementById('tickerWrap');
 
   const START_DATE = new Date(2024, 4, 14, 0, 0, 0); // 14/05/2024
 
@@ -56,6 +58,13 @@ Gracias por elegirme, por quedarte, por tu risa y por todos los días que
 aún nos faltan por vivir juntos.
 
 Te quiero, mi princesa. 💛`;
+
+  const TICKER_PHRASES = [
+    "Un gracias que no necesita fecha", "Contigo el día pesa menos",
+    "Hoy el amarillo lleva tu nombre", "Aquí siempre tienes un lugar",
+    "Este día contigo tiene otro brillo", "Gracias por ser mi sol de siempre",
+    "Eres mi persona favorita", "Contigo todo se siente más bonito"
+  ];
 
   const WISH_PHRASES = [
     "Pide un deseo 💛", "Siempre estaré para ti", "Eres mi persona favorita",
@@ -139,6 +148,8 @@ Te quiero, mi princesa. 💛`;
     garden.classList.remove('hidden');
     buildOrbitRings();
     buildParticleFlower();
+    buildTicker();
+    startShapeCycle();
     if (!reduced) { buildGarden(); buildFloatingPhrases(); buildButterflies(); buildBouquets(); buildJet(); }
     else buildGardenStatic();
     revealMessages();
@@ -339,6 +350,31 @@ Te quiero, mi princesa. 💛`;
       p.style.transform = `translate(-50%,-100%) rotate(${(360 / petalCount) * i}deg)`;
       particleFlower.appendChild(p);
     }
+  }
+
+  function buildTicker() {
+    const rowTops = window.innerWidth < 480 ? [12, 26, 42, 58, 72] : [10, 24, 40, 56, 70, 84];
+    rowTops.forEach((top, i) => {
+      const row = document.createElement('div');
+      row.className = 'ticker-row';
+      const shuffled = [...TICKER_PHRASES].sort(() => Math.random() - 0.5);
+      row.textContent = shuffled.join('   ✦   ') + '   ✦   ' + shuffled.join('   ✦   ');
+      row.style.top = top + 'vh';
+      row.style.animationDuration = rand(26, 42) + 's';
+      row.style.animationDelay = -rand(0, 20) + 's';
+      row.style.fontSize = rand(11, 13) + 'px';
+      tickerWrap.appendChild(row);
+    });
+  }
+
+  function startShapeCycle() {
+    if (reduced) return;
+    let showingFlower = true;
+    setInterval(() => {
+      showingFlower = !showingFlower;
+      particleFlower.classList.toggle('show', showingFlower);
+      particleHeart.classList.toggle('show', !showingFlower);
+    }, 6000);
   }
 
   function buildJet() {
