@@ -185,6 +185,37 @@ html,body{
   filter:drop-shadow(0 0 6px rgba(244,197,66,.6));
 }
 @keyframes flowerBreathe{0%,100%{transform:translate(-50%,-50%) scale(1);}50%{transform:translate(-50%,-50%) scale(1.06);}}
+.particle-flower{opacity:0;transition:opacity 1.8s ease;}
+.particle-flower.show{opacity:1;}
+
+.particle-heart{
+  position:absolute;left:50%;top:18%;transform:translate(-50%,-50%);
+  width:100px;height:88px;z-index:2;pointer-events:none;
+  opacity:0;transition:opacity 1.8s ease;
+  animation:flowerBreathe 5s ease-in-out infinite;
+}
+.particle-heart.show{opacity:1;}
+.particle-heart::before,.particle-heart::after{
+  content:"";position:absolute;top:0;width:50px;height:80px;border-radius:50px 50px 0 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 25% 30%, var(--gold) 60%, transparent 65%),
+    radial-gradient(1.5px 1.5px at 60% 20%, var(--gold-soft) 60%, transparent 65%),
+    radial-gradient(1.5px 1.5px at 40% 55%, var(--gold) 60%, transparent 65%),
+    radial-gradient(1.5px 1.5px at 70% 65%, var(--gold-soft) 60%, transparent 65%),
+    radial-gradient(1.5px 1.5px at 30% 75%, var(--gold) 60%, transparent 65%);
+  background-color:rgba(244,197,66,.06);
+  filter:drop-shadow(0 0 6px rgba(244,197,66,.6));
+}
+.particle-heart::before{left:50px;transform:rotate(-45deg);transform-origin:0 100%;}
+.particle-heart::after{left:0;transform:rotate(45deg);transform-origin:100% 100%;}
+
+.ticker-wrap{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1;}
+.ticker-row{
+  position:absolute;left:0;width:100%;white-space:nowrap;
+  font-size:.7rem;letter-spacing:.02em;color:rgba(247,217,122,.32);
+  animation-name:tickerMove;animation-timing-function:linear;animation-iteration-count:infinite;
+}
+@keyframes tickerMove{from{transform:translateX(100vw);}to{transform:translateX(-100%);}}
 
 .orbit-rings{position:absolute;inset:0;pointer-events:none;z-index:1;}
 .orbit-ring{
