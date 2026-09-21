@@ -66,6 +66,13 @@ Te quiero, mi princesa. 💛`;
     "Eres mi persona favorita", "Contigo todo se siente más bonito"
   ];
 
+  const WORD_CLOUD_WORDS = [
+    'Mi destino', 'Brillas', 'Mi sol', 'Esperanza', 'Pasión', 'Eternidad',
+    'Reina', 'Libertad', 'Contigo', 'Dulzura', 'Mi cielo', 'Mi fiesta',
+    'Sueños', 'Mi universo', 'Mi calma', 'Felicidad', 'Mi amor', 'Ternura'
+  ];
+  const WORD_COLORS = ['#f7d97a', '#fff6df', '#f6c8d8', '#bfe8f0'];
+
   const WISH_PHRASES = [
     "Pide un deseo 💛", "Siempre estaré para ti", "Eres mi persona favorita",
     "Gracias por existir", "Mi corazón es tuyo", "Contigo, siempre"
@@ -149,6 +156,7 @@ Te quiero, mi princesa. 💛`;
     buildOrbitRings();
     buildParticleFlower();
     buildTicker();
+    buildWordCloud();
     startShapeCycle();
     if (!reduced) { buildGarden(); buildFloatingPhrases(); buildButterflies(); buildBouquets(); buildJet(); }
     else buildGardenStatic();
@@ -375,6 +383,25 @@ Te quiero, mi princesa. 💛`;
       particleFlower.classList.toggle('show', showingFlower);
       particleHeart.classList.toggle('show', !showingFlower);
     }, 6000);
+  }
+
+  function buildWordCloud() {
+    const wordCloud = document.getElementById('wordCloud');
+    const count = window.innerWidth < 480 ? 12 : 18;
+    const words = [...WORD_CLOUD_WORDS];
+    for (let i = 0; i < count; i++) {
+      const w = document.createElement('div');
+      w.className = 'word-item';
+      w.textContent = words[i % words.length];
+      w.style.left = rand(2, 82) + 'vw';
+      w.style.top = rand(6, 88) + 'vh';
+      w.style.fontSize = rand(11, 22) + 'px';
+      w.style.color = WORD_COLORS[i % WORD_COLORS.length];
+      w.style.textShadow = `0 0 8px ${WORD_COLORS[i % WORD_COLORS.length]}88`;
+      w.style.animationDelay = `${rand(0, 1.5)}s, ${rand(0, 4)}s`;
+      w.style.animationDuration = `1.5s, ${rand(4, 7)}s`;
+      wordCloud.appendChild(w);
+    }
   }
 
   function buildJet() {
