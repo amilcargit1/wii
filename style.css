@@ -55,6 +55,39 @@ html,body{
 
 .no-tap{cursor:auto;}
 
+/* ---------- TÚNEL DE VELOCIDAD ---------- */
+#warp{background:#000;}
+.warp-tunnel{position:absolute;inset:0;overflow:hidden;}
+.warp-streak{
+  position:absolute;left:50%;top:50%;width:3px;height:3px;
+  background:var(--gold-soft);border-radius:50%;
+  box-shadow:0 0 8px 2px rgba(244,197,66,.9);
+  animation-name:streakFly;animation-timing-function:linear;animation-iteration-count:infinite;
+}
+@keyframes streakFly{
+  0%{transform:rotate(var(--ang,0deg)) translateX(0) scale(.3);opacity:0;}
+  15%{opacity:1;}
+  100%{transform:rotate(var(--ang,0deg)) translateX(420px) scale(1.6);opacity:0;}
+}
+.warp-item{
+  position:absolute;left:50%;top:50%;font-size:26px;white-space:nowrap;
+  color:var(--gold-soft);text-shadow:0 0 10px rgba(244,197,66,.8);
+  transform:translate(-50%,-50%) scale(.2);opacity:0;
+  animation-name:warpItemFly;animation-timing-function:ease-in;animation-fill-mode:forwards;
+}
+@keyframes warpItemFly{
+  0%{transform:translate(-50%,-50%) scale(.2);opacity:0;}
+  20%{opacity:1;}
+  100%{transform:translate(calc(-50% + var(--fx,0px)), calc(-50% + var(--fy,0px))) scale(2.6);opacity:0;}
+}
+
+/* ---------- CAPA CON ZOOM / ARRASTRE ---------- */
+.galaxy-layer{
+  position:absolute;inset:0;touch-action:none;
+  transform-origin:50% 50%;
+  will-change:transform;
+}
+
 /* ---------- CONTRASEÑA ---------- */
 .pass-content{position:relative;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.6rem;text-align:center;padding:1.5rem;}
 .pass-icon{font-size:2.4rem;filter:drop-shadow(0 0 10px rgba(244,197,66,.5));margin-bottom:.3rem;}
